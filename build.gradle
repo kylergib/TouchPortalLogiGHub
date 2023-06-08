@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'com.github.gmazzo.buildconfig' version '3.0.0'
+    id 'com.christophecvb.touchportal.plugin-packager' version "8.3.0"
+}
+def mainClassSimpleName = 'LogiGHubPlugin'
+def mainClassPackage = 'com.kylergib.logighub'
+group mainClassPackage
+
+def versionMajor = 1
+def versionMinor = 0
+def versionPatch = 0
+version versionMajor + '' + versionMinor + '' + versionPatch
+def versionCode = versionMajor * 1000 + versionMinor * 100 + versionPatch
+
+tpPlugin.mainClassSimpleName = mainClassSimpleName
+
+repositories {
+    mavenCentral()
+}
+
+buildConfig {
+    packageName = project.group
+
+    buildConfigField 'String', 'NAME', "\"${project.name}\""
+    buildConfigField 'String', 'VERSION_NAME', "\"${version}\""
+    buildConfigField 'long', 'VERSION_CODE', versionCode + ''
+}
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'com.christophecvb.touchportal:plugin-sdk:8.3.0'
+    annotationProcessor 'com.christophecvb.touchportal:plugin-sdk-annotations-processor:8.3.0'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation 'org.json:json:20220924'
+}
+
+test {
+    useJUnitPlatform()
+}
