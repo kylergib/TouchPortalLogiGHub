@@ -43,6 +43,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     public static boolean needDevices;
     public static boolean retrySent;
     public static int msgCount;
+    private static boolean appIsOpen;
     private MonitorAppThread monitorAppThread;
 
     public final static Level INFO = Level.INFO;
@@ -55,6 +56,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     @Override
     public void onAppOpened() {
         LOGGER.log(INFO, "G Hub opened");
+        appIsOpen = true;
         try {
             connectToGHub();
         } catch (URISyntaxException | InterruptedException e) {
@@ -65,6 +67,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     @Override
     public void onAppClosed() {
         LOGGER.log(WARNING, "G Hub closed");
+        appIsOpen = false;
         gHubClient.close();
     }
 
@@ -103,6 +106,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         if (args != null && args.length == 1) {
             if (PluginHelper.COMMAND_START.equals(args[0])) {
                 // Initialize the Plugin
+                appIsOpen = false;
 
                 logiGHubPlugin = new LogiGHubPlugin();
                 logiGHubPlugin.connectThenPairAndListen(logiGHubPlugin);
@@ -398,6 +402,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
     }
     public void setLogLevel() {
+        debugSetting = 4;
         LOGGER.log(Level.INFO, "Log level is: " + debugSetting);
         ConsoleHandler consoleHandler = (ConsoleHandler) Arrays.stream(LOGGER.getHandlers()).findFirst().get();
         Level newLevel;
@@ -617,6 +622,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                         @Data(valueChoices = {}) String[] profiles,
                                         @Data(valueChoices = {}) String[] apps,
                                         @Data(valueChoices = {"on","off","toggle"}) String[] values) {
+        if (!appIsOpen) return;
         LogiGHubPlugin.LOGGER.log(Level.FINE, String.format("device: %s, profile: %s, app: %s, value: %s",
                 devices[0],profiles[0],apps[0],values[0]));
         //finds app id then gets the profile and then finds the device that it needs to change power to.
@@ -653,6 +659,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     public static void switchActiveProfileForApp(
             @Data(stateId = "profiles") String[] profiles,
             @Data(valueChoices = {}) String[] apps) {
+        if (!appIsOpen) return;
         Application selectedApp = findApp(apps[0]);
         if (selectedApp != null) {
             Profile selectedProfile = findProfileWithApp(GHubClient.profiles, profiles[0], selectedApp.getApplicationId());
@@ -672,7 +679,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                              @Data(valueChoices = {}) String[] profiles,
                                              @Data(valueChoices = {}) String[] apps,
                                              @Data(minValue = 0, maxValue = 100) Integer brightness) {
-
+        if (!appIsOpen) return;
 
         int newBrightness = convertPercentToBrightness(brightness);
 
@@ -687,12 +694,10 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                 selectedProfile.setBrightness(brightness);
                 String ledString = LitraGlowActions.setLEDColorForProfileNoPreset(selectedDevice, selectedProfile, selectedApp,
                         selectedProfile.getTemperature(), newBrightness);
-                String assignmentString = "";
-                if (selectedProfile.isPresetActive()) {
-                    assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
-                            selectedProfile.getTemperature(), newBrightness);
-                    selectedProfile.setPresetActive(false);
-                }
+                String assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
+                        selectedProfile.getTemperature(), newBrightness);
+                selectedProfile.setPresetActive(false);
+
                 gHubClient.send(ledString);
                 gHubClient.send(assignmentString);
                 setBrightnessConnector(selectedProfile, brightness,selectedDevice.getGivenName(), selectedApp);
@@ -710,29 +715,33 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                      @Data(valueChoices = {}) String[] profiles,
                                      @Data(valueChoices = {}) String[] apps,
                                      @Data(minValue = 0, maxValue = 6500) Integer temp) {
-
+        if (!appIsOpen) return;
         if (temp < 2700)  temp = 2700;
         else temp =  Math.round(temp / 100.0f) * 100;
         LOGGER.log(Level.FINE, String.format("temp %d", temp));
         Application selectedApp = findApp(apps[0]);
+        LOGGER.log(Level.FINE, "1");
         LitraGlow selectedDevice = findDevice(devices[0]);
         Profile selectedProfile = findProfileWithApp(selectedDevice.getProfileList(),profiles[0], selectedApp.getApplicationId());
+        LOGGER.log(Level.FINE, "2");
         if (selectedProfile != null) {
-            if (selectedProfile.getTemperature() != temp) {
-                String ledString = LitraGlowActions.setLEDColorForProfileNoPreset(selectedDevice, selectedProfile, selectedApp,
-                        temp, convertPercentToBrightness(selectedProfile.getBrightness()));
-                String assignmentString = "";
-                if (selectedProfile.isPresetActive()) {
-                    assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
-                            temp, convertPercentToBrightness(selectedProfile.getBrightness()));
-                    selectedProfile.setPresetActive(false);
-                }
-                gHubClient.send(ledString);
-                gHubClient.send(assignmentString);
-                selectedProfile.setTemperature(temp);
-                setTemperatureConnector(selectedProfile, temp, selectedDevice.getGivenName(), selectedApp);
+            LOGGER.log(Level.FINE, "10");
+            String ledString = LitraGlowActions.setLEDColorForProfileNoPreset(selectedDevice, selectedProfile, selectedApp,
+                    temp, convertPercentToBrightness(selectedProfile.getBrightness()));
+            LOGGER.log(Level.FINE, "9");
+            gHubClient.send(ledString);
+            LOGGER.log(Level.FINE, "3");
+            String assignmentString = "";
+            assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
+                    temp, convertPercentToBrightness(selectedProfile.getBrightness()));
+            gHubClient.send(assignmentString);
+            LOGGER.log(Level.FINE, "4");
+            selectedProfile.setPresetActive(false);
+            LOGGER.log(Level.FINE, "5");
+            selectedProfile.setTemperature(temp);
+            setTemperatureConnector(selectedProfile, temp, selectedDevice.getGivenName(), selectedApp);
+            LOGGER.log(Level.FINE, "6");
 
-            }
 
 
         }
@@ -747,7 +756,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                       @Data(valueChoices = {}) String[] apps,
                                       @Data(stateId = "presets") String[] presets) {
 
-
+        if (!appIsOpen) return;
         LOGGER.log(Level.FINE, String.format("preset %s", presets[0]));
         Application selectedApp = findApp(apps[0]);
 
@@ -758,12 +767,6 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         if (selectedDevice != null && selectedApp != null && selectedPreset != null) {
             selectedProfile = findProfileWithApp(selectedDevice.getProfileList(),profiles[0], selectedApp.getApplicationId());
             convertedBrightness = (int) convertBrightnessToPercentage(selectedPreset.getBrightness());
-        }
-        
-        
-        if (selectedProfile != null && (convertedBrightness != selectedProfile.getBrightness() ||
-                            selectedPreset.getTemperature() != selectedProfile.getTemperature())) {
-            
             String presetString = LitraGlowActions.enablePresetForProfile(selectedDevice,selectedProfile,selectedPreset,selectedApp);
             gHubClient.send(presetString);
             selectedProfile.setTemperature(selectedPreset.getTemperature());
@@ -774,8 +777,11 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                     selectedDevice.getGivenName(),selectedApp);
             setBrightnessConnector(selectedProfile,convertedBrightness,
                     selectedDevice.getGivenName(),selectedApp);
-
         }
+            
+
+
+
 
 
     }
@@ -786,7 +792,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                        @Data(valueChoices = {}) String[] profiles,
                                        @Data(valueChoices = {}) String[] apps,
                                        @ConnectorValue Integer brightness) {
-
+        if (!appIsOpen) return;
         int newBrightness = convertPercentToBrightness(brightness);
 
         LOGGER.log(Level.FINE, String.format("brightness %d", newBrightness));
@@ -798,12 +804,10 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
             String ledString = LitraGlowActions.setLEDColorForProfileNoPreset(selectedDevice, selectedProfile, selectedApp,
                     selectedProfile.getTemperature(), newBrightness);
-            String assignmentString = "";
-            if (selectedProfile.isPresetActive()) {
-                assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
-                        selectedProfile.getTemperature(), newBrightness);
-                selectedProfile.setPresetActive(false);
-            }
+            String assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
+                    selectedProfile.getTemperature(), newBrightness);
+            selectedProfile.setPresetActive(false);
+
             gHubClient.send(ledString);
             gHubClient.send(assignmentString);
             selectedProfile.setBrightness(brightness);
@@ -818,7 +822,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                             @Data(valueChoices = {}) String[] profiles,
                                             @Data(valueChoices = {}) String[] apps,
                                             @ConnectorValue Integer temp) {
-
+        if (!appIsOpen) return;
         int convertedTemp = convertPercentToTemperature(temp);
 
         LOGGER.log(Level.FINE, String.format("temp %d", convertedTemp));
@@ -830,12 +834,10 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
             selectedProfile.setTemperature(convertedTemp);
             String ledString = LitraGlowActions.setLEDColorForProfileNoPreset(selectedDevice, selectedProfile, selectedApp,
                     convertedTemp, convertPercentToBrightness(selectedProfile.getBrightness()));
-            String assignmentString = "";
-            if (selectedProfile.isPresetActive()) {
-                assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
-                        convertedTemp, convertPercentToBrightness(selectedProfile.getBrightness()));
-                selectedProfile.setPresetActive(false);
-            }
+            String assignmentString = LitraGlowActions.setLEDColorForProfileWithPreset(selectedDevice, selectedProfile, selectedApp,
+                    convertedTemp, convertPercentToBrightness(selectedProfile.getBrightness()));
+            selectedProfile.setPresetActive(false);
+
             gHubClient.send(ledString);
             gHubClient.send(assignmentString);
             selectedProfile.setTemperature(temp);
