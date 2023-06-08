@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="209bcc4c-9dd2-4ae8-a671-5fb318e25aee" name="Changes" comment="init" />
+    <list default="true" id="209bcc4c-9dd2-4ae8-a671-5fb318e25aee" name="Changes" comment="fixed an issue causing plugin to not finish its action correctly">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/LogiGHubPlugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/LogiGHubPlugin.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -218,7 +221,7 @@
       <workItem from="1686088837584" duration="20866000" />
       <workItem from="1686151558790" duration="16647000" />
       <workItem from="1686176934572" duration="5768000" />
-      <workItem from="1686194986957" duration="2001000" />
+      <workItem from="1686194986957" duration="4009000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1686198055006</created>
@@ -227,7 +230,21 @@
       <option name="project" value="LOCAL" />
       <updated>1686198055006</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="init">
+      <created>1686198327361</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1686198327361</updated>
+    </task>
+    <task id="LOCAL-00003" summary="fixed an issue causing plugin to not finish its action correctly">
+      <created>1686199710619</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1686199710619</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,7 +252,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+    <MESSAGE value="fixed an issue causing plugin to not finish its action correctly" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed an issue causing plugin to not finish its action correctly" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

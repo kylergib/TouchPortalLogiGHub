@@ -145,7 +145,8 @@ public abstract class LitraGlowActions {
         jsonObject.put("path", "/card");
 
         JSONObject payload = new JSONObject();
-        payload.put("id", profile.getILLUMINATION_LIGHT_COLOR_SETTINGS());
+//        payload.put("id", profile.getILLUMINATION_LIGHT_COLOR_SETTINGS());
+        payload.put("id", litraGlow.getDEFAULT_CARD_ID());
         payload.put("name", "DEFAULT_CARD_NAME_ILLUMINATION_COLOR_SETTINGS");
         payload.put("attribute","ILLUMINATION_LIGHT_COLOR_SETTINGS");
         payload.put("category", "");
