@@ -424,50 +424,6 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
             LOGGER.setLevel(newLevel);
             LOGGER.log(Level.INFO, "Set new logger level to: " + newLevel);
         }
-        if (debugSetting > 3) {
-            try {
-                File folder = new File(".");
-
-                if (folder.exists() && folder.isDirectory()) {
-                    File[] files = folder.listFiles();
-                    int numLogs = 0;
-                    if (files != null) {
-                        LocalDateTime oldestFileDate = null;
-                        File oldestFile = null;
-
-                        for (File file : files) {
-                            if (file.isFile()) {
-    //
-                                String filename = file.getName();
-                                if (filename.length() > 4 && filename.substring(filename.length() - 4).equals(".log")) {
-                                    LocalDateTime fileDate = LocalDateTime.parse(filename.substring(7,filename.length() - 4));
-                                    if (oldestFile == null) oldestFile = file;
-                                    if (oldestFileDate == null) oldestFileDate = fileDate;
-                                    else if (oldestFileDate.isAfter(fileDate)) {
-                                        oldestFileDate = fileDate;
-                                        oldestFile = file;
-                                    }
-                                    numLogs += 1;
-                                }
-
-                            }
-                        }
-                        if (oldestFile != null && numLogs > 4) {
-                            oldestFile.delete();
-                            LOGGER.log(FINEST, String.format("Deleted log file: %s", oldestFile.getName()));
-                        }
-                    }
-                }
-                LocalDateTime date = LocalDateTime.now();
-                FileHandler fileHandler = new FileHandler(String.format("logfile%s.log", date));
-
-                LOGGER.addHandler(fileHandler);
-                fileHandler.setFormatter(consoleHandler.getFormatter());
-                LOGGER.log(FINEST, "Starting to output to logfile.log");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
 
     }
 
