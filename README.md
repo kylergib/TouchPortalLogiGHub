@@ -35,7 +35,7 @@
 - Profile brightness
   - See above about brightness action, does basically the same thing, but you change it with a slider.
 - Profile temperature
-  - - See above about temperature action, does basically the same thing, but you change it with a slider.
+  - See above about temperature action, does basically the same thing, but you change it with a slider.
 
 ## FAQ
 - since I do not have any other logitech products I cannot add support for them.
