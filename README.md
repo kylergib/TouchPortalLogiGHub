@@ -4,6 +4,7 @@
 
 ### This plugin is for Logitech G Hub
 
+
 ### Actions:
 - Power device on/off
   - Powers device on/off, or you can toggle between the two.
