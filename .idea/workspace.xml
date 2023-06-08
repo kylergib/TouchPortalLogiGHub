@@ -4,34 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="209bcc4c-9dd2-4ae8-a671-5fb318e25aee" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradlew.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.gradle" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/ConfigCallback.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/GHubClient.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/LogiGHubPlugin.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/MonitorAppThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/Setup.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/TPStates.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/device/Application.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/device/LitraGlow.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/device/LitraGlowActions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/device/Preset.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/device/Profile.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/setupConfig/ApplicationSetUp.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/setupConfig/DeviceSetup.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/kylergib/logighub/setupConfig/ProfileSetUp.java" afterDir="false" />
-    </list>
+    <list default="true" id="209bcc4c-9dd2-4ae8-a671-5fb318e25aee" name="Changes" comment="init" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -245,12 +218,24 @@
       <workItem from="1686088837584" duration="20866000" />
       <workItem from="1686151558790" duration="16647000" />
       <workItem from="1686176934572" duration="5768000" />
-      <workItem from="1686194986957" duration="1621000" />
+      <workItem from="1686194986957" duration="2001000" />
     </task>
+    <task id="LOCAL-00001" summary="init">
+      <created>1686198055006</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1686198055006</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="init" />
+    <option name="LAST_COMMIT_MESSAGE" value="init" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

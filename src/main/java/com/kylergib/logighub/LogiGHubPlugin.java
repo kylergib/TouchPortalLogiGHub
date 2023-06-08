@@ -285,7 +285,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
                 LOGGER.log(Level.INFO, "Update option clicked");
                 //TODO: redirect to github
-                String url = "https://www..com";
+                String url = "https://github.com/kylergib/TouchPortalLogiGHub";
 
                 // Create a URI object from the URL
                 URI uri = null;
@@ -767,7 +767,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
             String presetString = LitraGlowActions.enablePresetForProfile(selectedDevice,selectedProfile,selectedPreset,selectedApp);
             gHubClient.send(presetString);
             selectedProfile.setTemperature(selectedPreset.getTemperature());
-            LOGGER.log(INFO, "SET TEMP TO: " + selectedProfile.getTemperature());
+            LOGGER.log(FINE, "SET TEMP TO: " + selectedProfile.getTemperature());
             selectedProfile.setBrightness(convertedBrightness);
             selectedProfile.setPresetActive(true);
             setTemperatureConnector(selectedProfile, selectedPreset.getTemperature(),
@@ -795,7 +795,6 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         LitraGlow selectedDevice = findDevice(devices[0]);
         Profile selectedProfile = findProfileWithApp(selectedDevice.getProfileList(),profiles[0], selectedApp.getApplicationId());
         if (selectedProfile != null) {
-//            if (selectedProfile.getBrightness() == brightness) return;
 
             String ledString = LitraGlowActions.setLEDColorForProfileNoPreset(selectedDevice, selectedProfile, selectedApp,
                     selectedProfile.getTemperature(), newBrightness);
@@ -915,8 +914,8 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     }
     public boolean checkForUpdate() {
         //TODO: replace with right info after commit
-        String repositoryOwner = "";
-        String repositoryName = "";
+        String repositoryOwner = "kylergib";
+        String repositoryName = "TouchPortalLogiGHub";
 
         try {
             URL url = new URL("https://api.github.com/repos/" + repositoryOwner + "/" + repositoryName + "/releases/latest");
