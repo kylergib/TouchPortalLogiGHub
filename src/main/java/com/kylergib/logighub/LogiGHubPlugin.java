@@ -431,11 +431,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     public void onBackendReceived() {
 
         getGhubSettings();
-//        try {
-//            latch.await();
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+
 
     }
 
@@ -610,7 +606,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
 
     @Action(description = "Switch active profile for specific app", format = "Set profile: {$profiles$} active for app: {$apps$}",
-            categoryId = "LogiGHub", name="Change active profile for specific app")
+            categoryId = "LogiGHub", name="Switch Profile")
     public static void switchActiveProfileForApp(
             @Data(stateId = "profiles") String[] profiles,
             @Data(valueChoices = {}) String[] apps) {
@@ -628,8 +624,8 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
     }
 
-    @Action(description = "Set Brightness for device on profile/app", format = "Device: {$devices$}, profile: {$profiles$} for app: {$apps$}, brightness: {$brightness$}",
-            categoryId = "LogiGHub", name="setBrightness")
+    @Action(description = "Set Brightness for device on profile/app (brightness is from 0-100, 0 sets brightness to lowest amount in G Hub", format = "Device: {$devices$}, profile: {$profiles$} for app: {$apps$}, brightness: {$brightness$}",
+            categoryId = "LogiGHub", name="Set Brightness")
     public static void setBrightness(@Data(stateId = "devices")  String[] devices,
                                              @Data(valueChoices = {}) String[] profiles,
                                              @Data(valueChoices = {}) String[] apps,
@@ -664,8 +660,8 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         }
 
     }
-    @Action(description = "Set Temperature for device on profile/app", format = "Device: {$devices$}, profile: {$profiles$} for app: {$apps$}, temperature: {$temp$}",
-            categoryId = "LogiGHub", name="setTemperature")
+    @Action(description = "Set Temperature for device on profile/app (temperature is from 2700 - 6500, anything below 2700 will set it to 2700)", format = "Device: {$devices$}, profile: {$profiles$} for app: {$apps$}, temperature: {$temp$}",
+            categoryId = "LogiGHub", name="Set Temperature")
     public static void setTemperature(@Data(stateId = "devices")  String[] devices,
                                      @Data(valueChoices = {}) String[] profiles,
                                      @Data(valueChoices = {}) String[] apps,
@@ -733,7 +729,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
             setBrightnessConnector(selectedProfile,convertedBrightness,
                     selectedDevice.getGivenName(),selectedApp);
         }
-            
+
 
 
 
