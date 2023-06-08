@@ -81,11 +81,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         LogiGHub
     }
 
-    /**
-     * IP address setting in touch portal
-     */
-    @Setting(name = "IP", defaultValue = "localhost", maxLength = 15)
-    private static String ipSetting;
+
 
     /**
      * Debug setting in touch portal
@@ -261,23 +257,6 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     @Override
     public void onSettings(TPSettingsMessage tpSettingsMessage) {
         setLogLevel();
-
-
-        //TODO: test below, unsure if you can connect to another computer or not
-
-        LOGGER.log(Level.INFO, "Plugin Settings Changed");
-        if (!currentIp.equals(ipSetting)) {
-            if (gHubClient.isOpen()) {
-                gHubClient.close();
-                LOGGER.log(Level.INFO, "Closed previous connection to G Hub");
-
-                try {
-                    connectToGHub();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 
     @Override
@@ -373,8 +352,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
 
         latch = new CountDownLatch(1);
-        currentIp = ipSetting;
-
+        currentIp = "localhost";
         setLogLevel();
         int port = 9010;
         LOGGER.log(Level.INFO, "Trying to connect to Log GHub at: " + currentIp + ":" + port);
