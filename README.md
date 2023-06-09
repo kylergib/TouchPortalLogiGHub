@@ -4,6 +4,10 @@
 
 ### This plugin is for Logitech G Hub
 
+### Logitech G Hub needs to be open for plug in to work
+- I made the plugin wait for G Hub to be open and initialize itself before getting settings.
+- Also, the plugin actions should not work when G Hub is closed and should start to work again after G Hub is opened again and initialized.
+
 
 ### Actions:
 - Power device on/off
