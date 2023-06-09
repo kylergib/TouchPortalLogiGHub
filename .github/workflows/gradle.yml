@@ -26,3 +26,6 @@ jobs:
       run: ./gradlew
     - name: Package plugin
       run: ./gradlew packagePlugin
+    - name: list files
+      run: ls -R build/libs
+    
