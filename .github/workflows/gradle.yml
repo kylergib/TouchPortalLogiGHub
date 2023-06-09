@@ -26,6 +26,28 @@ jobs:
       run: ./gradlew
     - name: Package plugin
       run: ./gradlew packagePlugin
-    - name: list files
-      run: ls -R build/libs
+    - name: Get version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(grep version build.gradle | awk '{print $2}' | tr -d "'")
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the output of the create_release step
+        asset_path: ./build/plugin/LogiGHubPlugin.tpp # Replace this with the path to your JAR file
+        asset_name: LogiGHubPlugin.tpp
+        asset_content_type: application/octet-stream
     
