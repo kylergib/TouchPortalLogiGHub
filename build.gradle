@@ -37,3 +37,8 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+task printVersion {
+    doLast {
+        println version
+    }
+}
