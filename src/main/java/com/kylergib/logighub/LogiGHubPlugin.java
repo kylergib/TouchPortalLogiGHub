@@ -143,8 +143,18 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
 
         }
-        monitorAppThread = new MonitorAppThread(this);
-        monitorAppThread.start();
+
+        if (monitorAppThread == null) {
+            monitorAppThread = new MonitorAppThread(this);
+            monitorAppThread.start();
+        }
+        //        try {
+//            connectToGHub();
+//        } catch (URISyntaxException e) {
+//            throw new RuntimeException(e);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 
@@ -552,7 +562,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                         @Data(valueChoices = {}) String[] apps,
                                         @Data(valueChoices = {"on","off","toggle"}) String[] values) {
         if (!appIsOpen) return;
-        LogiGHubPlugin.LOGGER.log(Level.FINE, String.format("device: %s, profile: %s, app: %s, value: %s",
+        LogiGHubPlugin.LOGGER.log(Level.INFO, String.format("device: %s, profile: %s, app: %s, value: %s",
                 devices[0],profiles[0],apps[0],values[0]));
         //finds app id then gets the profile and then finds the device that it needs to change power to.
         Application application = GHubClient.apps.stream().filter(app -> app.getApplicationName().equals(apps[0])).findFirst().get();
@@ -588,6 +598,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     public static void switchActiveProfileForApp(
             @Data(stateId = "profiles") String[] profiles,
             @Data(valueChoices = {}) String[] apps) {
+        LOGGER.log(INFO, String.format("Profile: %s, app: %s", profiles[0],apps[0]));
         if (!appIsOpen) return;
         Application selectedApp = findApp(apps[0]);
         if (selectedApp != null) {
@@ -612,7 +623,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
         int newBrightness = convertPercentToBrightness(brightness);
 
-        LOGGER.log(Level.FINE, String.format("brightness %d", newBrightness));
+        LOGGER.log(Level.INFO, String.format("brightness %d", newBrightness));
 
         Application selectedApp = findApp(apps[0]);
 
@@ -647,7 +658,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         if (!appIsOpen) return;
         if (temp < 2700)  temp = 2700;
         else temp =  Math.round(temp / 100.0f) * 100;
-        LOGGER.log(Level.FINE, String.format("temp %d", temp));
+        LOGGER.log(Level.INFO, String.format("temp %d", temp));
         Application selectedApp = findApp(apps[0]);
         LOGGER.log(Level.FINE, "1");
         LitraGlow selectedDevice = findDevice(devices[0]);
@@ -686,7 +697,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
                                       @Data(stateId = "presets") String[] presets) {
 
         if (!appIsOpen) return;
-        LOGGER.log(Level.FINE, String.format("preset %s", presets[0]));
+        LOGGER.log(Level.INFO, String.format("preset %s", presets[0]));
         Application selectedApp = findApp(apps[0]);
 
         LitraGlow selectedDevice = findDevice(devices[0]);
@@ -724,7 +735,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         if (!appIsOpen) return;
         int newBrightness = convertPercentToBrightness(brightness);
 
-        LOGGER.log(Level.FINE, String.format("brightness %d", newBrightness));
+        LOGGER.log(Level.INFO, String.format("brightness %d", newBrightness));
         Application selectedApp = findApp(apps[0]);
 
         LitraGlow selectedDevice = findDevice(devices[0]);
@@ -754,7 +765,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         if (!appIsOpen) return;
         int convertedTemp = convertPercentToTemperature(temp);
 
-        LOGGER.log(Level.FINE, String.format("temp %d", convertedTemp));
+        LOGGER.log(Level.INFO, String.format("temp %d", convertedTemp));
         Application selectedApp = findApp(apps[0]);
 
         LitraGlow selectedDevice = findDevice(devices[0]);

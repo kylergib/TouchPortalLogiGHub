@@ -10,14 +10,16 @@ import static com.kylergib.logighub.LogiGHubPlugin.LOGGER;
 public class MonitorAppThread extends Thread {
     private final AppOpenCallback appCallback;
     private volatile boolean stopRequested = false;
+    private final String os;
 
     public void requestStop() {
         stopRequested = true;
-        interrupt(); // Optional: Interrupt the thread if it's blocked.
+        interrupt();
     }
 
     public MonitorAppThread(AppOpenCallback appCallback) {
         this.appCallback = appCallback;
+        os = System.getProperty("os.name").toLowerCase();
     }
 
     public interface AppOpenCallback {
@@ -27,7 +29,7 @@ public class MonitorAppThread extends Thread {
 
     public void run() {
         // Code to be executed in the new thread
-        String os = System.getProperty("os.name").toLowerCase();
+
         LOGGER.log(Level.INFO, os);
         boolean isRunning = false;
         if (os.contains("win")) {
@@ -35,7 +37,7 @@ public class MonitorAppThread extends Thread {
             isRunning = isAppRunningWin();
         } else if (os.contains("mac")) {
 
-            isRunning = isAppRunningMac();
+            isRunning = isAppRunningMac("lghub");
         }
         boolean appOpenedPreviously = isRunning;
         if (!isRunning) {
@@ -46,15 +48,16 @@ public class MonitorAppThread extends Thread {
             appCallback.onAppOpened();
         }
         int retries = 0;
+        int retryCountNeeded = 100;
         while (!stopRequested) {
-            int retryCountNeeded = 100;
-            if (retries % retryCountNeeded == 0) LOGGER.log(Level.FINEST, "Checking if Logitech G Hub is open");
+
+            if (retries % retryCountNeeded == 0) LOGGER.log(Level.INFO, "Checking if Logitech G Hub is open");
             if (os.contains("win")) {
 
                 isRunning = isAppRunningWin();
             } else if (os.contains("mac")) {
 
-                isRunning = isAppRunningMac();
+                isRunning = isAppRunningMac("lghub");
             }
             if (appOpenedPreviously && !isRunning) {
                 if (retries % retryCountNeeded == 0) LOGGER.log(Level.FINEST, "Logitech G Hub has closed");
@@ -65,7 +68,6 @@ public class MonitorAppThread extends Thread {
                 appOpenedPreviously = isRunning;
                 appCallback.onAppOpened();
             }
-
             try {
                 sleep(500);
             } catch (InterruptedException e) {
@@ -74,23 +76,27 @@ public class MonitorAppThread extends Thread {
             retries += 1;
         }
     }
+    public static boolean isAppRunningMac(String appName) {
 
-    private boolean isAppRunningMac() {
         try {
-            Process process = Runtime.getRuntime().exec("ps aux");
+            Process process = Runtime.getRuntime().exec("pgrep -l " + appName );
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                if (line.contains("lghub.app") && !(line.contains("update"))) {
+                if (line.contains("lghub") && !(line.contains("update"))) {
                     return true;
+
                 }
+
             }
-            reader.close();
+
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return false;
     }
+
     private boolean isAppRunningWin() {
         try {
             //TODO: need to test
