@@ -107,10 +107,12 @@ public class MonitorAppThread extends Thread {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains("lghub")) {
+                    process.destroy();
                     return true;
                 }
             }
             reader.close();
+            process.destroy();
         } catch (IOException e) {
             e.printStackTrace();
         }
