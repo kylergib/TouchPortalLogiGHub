@@ -11,6 +11,7 @@ def versionMajor = 1
 def versionMinor = 0
 def versionPatch = 2
 version versionMajor + '' + versionMinor + '' + versionPatch
+def versionPeriod = versionMajor + '.' + versionMinor + '.' + versionPatch
 def versionCode = versionMajor * 1000 + versionMinor * 100 + versionPatch
 tpPlugin.mainClassSimpleName = mainClassSimpleName
 
@@ -39,6 +40,6 @@ test {
 }
 task printVersion {
     doLast {
-        println version
+        println versionPeriod
     }
 }
