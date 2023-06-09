@@ -55,6 +55,7 @@ public class MonitorAppThread extends Thread {
             if (os.contains("win")) {
 
                 isRunning = isAppRunningWin();
+
             } else if (os.contains("mac")) {
 
                 isRunning = isAppRunningMac("lghub");
@@ -81,21 +82,22 @@ public class MonitorAppThread extends Thread {
         try {
             Process process = Runtime.getRuntime().exec("pgrep -l " + appName );
 
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.contains("lghub") && !(line.contains("update"))) {
+                    process.destroy();
                     return true;
-
                 }
-
             }
-
+            process.destroy();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return false;
     }
+
 
     private boolean isAppRunningWin() {
         try {
