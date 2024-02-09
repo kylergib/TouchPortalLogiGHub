@@ -56,8 +56,10 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     @Override
     public void onAppOpened() {
         LOGGER.log(INFO, "G Hub opened");
+        GHubLogger.gLogger.addMessage("G Hub opened");
         appIsOpen = true;
         try {
+
             connectToGHub();
         } catch (URISyntaxException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -67,6 +69,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     @Override
     public void onAppClosed() {
         LOGGER.log(WARNING, "G Hub closed");
+        GHubLogger.gLogger.addMessage("G Hub Closed");
         appIsOpen = false;
         gHubClient.close();
     }
@@ -131,12 +134,15 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
     @Override
     public void onInfo(TPInfoMessage tpInfoMessage) {
+        GHubLogger.gLogger = new GHubLogger();
+        GHubLogger.gLogger.addMessage("Connected to touch portal");
+
         boolean updateAvailable = checkForUpdate();
         if (updateAvailable) {
             logiGHubPlugin.sendShowNotification(
                     LogiGHubPluginConstants.LogiGHub.ID + ".updateNotification",
                     "Update is available. ",
-                    "You are on version: " + BuildConfig.VERSION_CODE + " and update is available on GitHub",
+                    "You are on version: " + BuildConfig.VERSION_CODE + " and an update is available on GitHub",
                     new TPNotificationOption[]{
                             new TPNotificationOption(LogiGHubPluginConstants.LogiGHub.ID + ".updateNotification.options.openLink", "Open Link")
                     });
@@ -271,7 +277,6 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
     @Override
     public void onNotificationOptionClicked(TPNotificationOptionClickedMessage tpNotificationOptionClickedMessage) {
-        LOGGER.log(Level.INFO, "before Update option clicked");
 
         if (tpNotificationOptionClickedMessage.notificationId.equals(LogiGHubPluginConstants.LogiGHub.ID + ".updateNotification")) {
             if (tpNotificationOptionClickedMessage.optionId.equals(LogiGHubPluginConstants.LogiGHub.ID + ".updateNotification.options.openLink")) {
@@ -354,10 +359,11 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
 
     public void connectToGHub() throws URISyntaxException, InterruptedException {
-
+        GHubLogger.gLogger.addMessage("trying to connect to ghub");
         retrySent = false;
 
         needDevices = true;
+        GHubLogger.gLogger.addMessage("need devices is " + needDevices);
         LOGGER.log(Level.FINE,"Starting plugin");
 
 
@@ -366,6 +372,8 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         setLogLevel();
         int port = 9010;
         LOGGER.log(Level.INFO, "Trying to connect to Log GHub at: " + currentIp + ":" + port);
+        GHubLogger.gLogger.addMessage("Trying to connect to Log GHub at: " + currentIp + ":" + port);
+
         gHubClient = new GHubClient(currentIp,port,logiGHubPlugin);
         Thread.sleep(100);
 
@@ -373,18 +381,22 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         while (!gHubClient.isConnected) {
             if (gHubClient.isOpen()) continue;
             LOGGER.log(Level.WARNING, "Not connected to lghub");
+            GHubLogger.gLogger.addMessage("Not connected to lghub");
             gHubClient = new GHubClient(currentIp,port,logiGHubPlugin);
             Thread.sleep(500);
         }
-        latch.await();
+        latch.await(); // latch 1
 //        latch = new CountDownLatch(5);
+        GHubLogger.gLogger.addMessage("past latch 1");
         msgCount = 150;
+        // first 5
         gHubClient.send(Setup.pathAndVerbJson(null,"SUBSCRIBE", "/notifications"));
 //        gHubClient.send(Setup.pathAndVerbJson(null,"SUBSCRIBE","/updates/frontend_restart_incoming"));
         gHubClient.send(Setup.pathAndVerbJson(null,"GET","/feature_flags"));
         gHubClient.send(Setup.pathAndVerbJson(null,"GET","/crash_reporting/status"));
         gHubClient.send(Setup.pathAndVerbJson(null,"GET","/updates/pipeline/info"));
         gHubClient.send(Setup.pathAndVerbJson(null,"GET","/community/lumen/environment"));
+        GHubLogger.gLogger.addMessage("send first 5");
         subscribeToGHub();
 
 
@@ -432,6 +444,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         GHubClient.presets = new ArrayList<>();
 
         if (DeviceSetup.createDevices()) {
+            GHubLogger.gLogger.addMessage("starting set up after devices");
             ProfileSetUp.sortProfiles();
             ApplicationSetUp.getApps();
             ProfileSetUp.getProfileSettings();
@@ -442,6 +455,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
 
 
             //updates states
+            GHubLogger.gLogger.addMessage("updating states");
             List<String> allDevices = new ArrayList<>();
             GHubClient.devices.forEach(device -> {
                 allDevices.add(device.getGivenName());
@@ -450,6 +464,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
             sendChoiceUpdate(LogiGHubPluginConstants.LogiGHub.States.Devices.ID, allDevices.toArray(new String[0]));
 
             List<String> allProfiles = new ArrayList<>();
+            GHubLogger.gLogger.addMessage("updating profiles");
             GHubClient.profiles.forEach(profile -> {
                 if (!allProfiles.contains(profile.getName())) allProfiles.add(profile.getName());
             });
@@ -457,6 +472,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
             sendChoiceUpdate(LogiGHubPluginConstants.LogiGHub.States.Profiles.ID, allProfiles.toArray(new String[0]));
 
             List<String> allPresets = new ArrayList<>();
+            GHubLogger.gLogger.addMessage("updating presets");
             GHubClient.presets.forEach(preset ->{
                 if (!allPresets.contains(preset.getPresetName())) allPresets.add(preset.getPresetName());
             });
@@ -465,6 +481,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
         else {
             if (!retrySent) {
                 LOGGER.log(Level.WARNING, "Did not find devices, will retry");
+                GHubLogger.gLogger.addMessage("did not find devices, will retry");
                 retrySent = true;
             }
             needDevices = true;
@@ -473,6 +490,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     }
 
     public void subscribeToGHub() {
+        GHubLogger.gLogger.addMessage("trying to subscribe");
         gHubClient.send(Setup.getLocalPackages());
         gHubClient.send(Setup.setCommunityUser());
         gHubClient.send(Setup.pathAndVerbJson("3","SUBSCRIBE","/devices/state/changed"));
@@ -520,6 +538,7 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
     }
 
     public void getGhubSettings() {
+        GHubLogger.gLogger.addMessage("trying to get ghubsettings");
         gHubClient.send(Setup.pathAndVerbJson("45","GET","/updates/periodic_check"));
         gHubClient.send(Setup.pathAndVerbJson("46","GET","/crash_reporting/status"));
         gHubClient.send(Setup.pathAndVerbJson("47","GET","/updates/status"));
@@ -866,7 +885,9 @@ public class LogiGHubPlugin extends TouchPortalPlugin implements TouchPortalPlug
             conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
 
             if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP Error code : " + conn.getResponseCode());
+
+                LOGGER.log(Level.INFO, "Failed : HTTP Error code : " + conn.getResponseCode());
+                return false;
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));

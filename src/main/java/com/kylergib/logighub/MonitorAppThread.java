@@ -13,11 +13,13 @@ public class MonitorAppThread extends Thread {
     private final String os;
 
     public void requestStop() {
+        GHubLogger.gLogger.addMessage("request stop of monitor app");
         stopRequested = true;
         interrupt();
     }
 
     public MonitorAppThread(AppOpenCallback appCallback) {
+        GHubLogger.gLogger.addMessage("starting monitor");
         this.appCallback = appCallback;
         os = System.getProperty("os.name").toLowerCase();
     }
@@ -31,6 +33,7 @@ public class MonitorAppThread extends Thread {
         // Code to be executed in the new thread
 
         LOGGER.log(Level.INFO, os);
+
         boolean isRunning = false;
         if (os.contains("win")) {
 
@@ -42,6 +45,7 @@ public class MonitorAppThread extends Thread {
         boolean appOpenedPreviously = isRunning;
         if (!isRunning) {
             LOGGER.log(Level.WARNING, "Logitech G Hub is not running");
+            GHubLogger.gLogger.addMessage("Logitech G Hub is not running");
         }
         else {
             LOGGER.log(Level.INFO, "Logitech G Hub is running.");
@@ -108,6 +112,7 @@ public class MonitorAppThread extends Thread {
             while ((line = reader.readLine()) != null) {
                 if (line.contains("lghub")) {
                     process.destroy();
+                    GHubLogger.gLogger.addMessage("G Hub is open");
                     return true;
                 }
             }
@@ -116,6 +121,7 @@ public class MonitorAppThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        GHubLogger.gLogger.addMessage("g hub is not open");
         return false;
     }
 }
